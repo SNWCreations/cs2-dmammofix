@@ -23,6 +23,7 @@ public class DMAmmoFix : BasePlugin
         return HookResult.Continue;
     }
 
+    [GameEventHandler]
     public HookResult OnWeaponFireButEmpty(EventWeaponFireOnEmpty @event, GameEventInfo info)
     {
         HandleWeaponFire(@event.Userid);

@@ -17,14 +17,26 @@ public class DMAmmoFix : BasePlugin
     private readonly ConVar _gameMode = ConVar.Find("game_mode")!;
 
     [GameEventHandler]
-    public HookResult OnWeaponReload(EventWeaponFire @event, GameEventInfo info)
+    public HookResult OnWeaponFire(EventWeaponFire @event, GameEventInfo info)
     {
+        HandleWeaponFire(@event.Userid);
+        return HookResult.Continue;
+    }
+
+    public HookResult OnWeaponFireButEmpty(EventWeaponFireOnEmpty @event, GameEventInfo info)
+    {
+        HandleWeaponFire(@event.Userid);
+        return HookResult.Continue;
+    }
+
+    private void HandleWeaponFire(CCSPlayerController? user)
+    {
+        
         var gameType = _gameType.GetPrimitiveValue<int>();
         var gameMode = _gameMode.GetPrimitiveValue<int>();
 
         if (gameType == 1 && gameMode == 2) // are we in Valve's DM mode?
         {
-            var user = @event.Userid;
             if (user != null)
             {
                 var pawn = user.Pawn.Get()!.As<CCSPlayerPawn>();
@@ -34,7 +46,5 @@ public class DMAmmoFix : BasePlugin
                 Utilities.SetStateChanged(weapon, "CBasePlayerWeapon", "m_pReserveAmmo");
             }
         }
-
-        return HookResult.Continue;
     }
 }
